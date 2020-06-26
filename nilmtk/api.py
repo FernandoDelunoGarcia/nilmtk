@@ -224,18 +224,20 @@ class API():
         self.train_mains = []
         self.train_submeters = [[] for i in range(len(self.appliances))]
         for dataset in d:
+            print("#############################")
             print("Loading data for ",dataset, " dataset")
             train=DataSet(d[dataset]['path'])
             for building in d[dataset]['buildings']:
                 print("Loading building ... ",building)
                 train.set_window(start=d[dataset]['buildings'][building]['start_time'],end=d[dataset]['buildings'][building]['end_time'])
-                train_df = next(train.buildings[building].elec.mains().load(physical_quantity='power', ac_type=self.power['mains'], sample_period=self.sample_period))
-                train_df = train_df[[list(train_df.columns)[0]]]
+                #train_df = next(train.buildings[building].elec.mains().load(physical_quantity='power', ac_type=self.power['mains'], sample_period=self.sample_period))
+                train_df = next(train.buildings[building].elec.mains().load(sample_period=self.sample_period))
+                train_df = train_df[train_df.columns]
                 appliance_readings = []
                 
                 for appliance_name in self.appliances:
-                    appliance_df = next(train.buildings[building].elec[appliance_name].load(physical_quantity='power', ac_type=self.power['appliance'], sample_period=self.sample_period))
-                    appliance_df = appliance_df[[list(appliance_df.columns)[0]]]
+                    appliance_df = next(train.buildings[building].elec[appliance_name].load(sample_period=self.sample_period))
+                    appliance_df = appliance_df[appliance_df.columns]
                     appliance_readings.append(appliance_df)
 
                 if self.DROP_ALL_NANS:

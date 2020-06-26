@@ -161,23 +161,28 @@ def find_steady_states(dataframe, min_n_samples=2, state_threshold=15,
     # than the noise threshold
     #  https://github.com/nilmtk/nilmtk/issues/400
 
-    if np.sum(
-            steady_states[0] > noise_level) and index_transitions[0] == index_steady_states[0] == dataframe.iloc[0].name:
-        transitions = transitions[1:]
-        index_transitions = index_transitions[1:]
-        steady_states = steady_states[1:]
-        index_steady_states = index_steady_states[1:]
 
-    print("Edge detection complete.")
+    try:
+        if np.sum(
+                steady_states[0] > noise_level) and index_transitions[0] == index_steady_states[0] == dataframe.iloc[0].name:
+            transitions = transitions[1:]
+            index_transitions = index_transitions[1:]
+            steady_states = steady_states[1:]
+            index_steady_states = index_steady_states[1:]
 
-    print("Creating transition frame ...")
-    sys.stdout.flush()
+        print("Edge detection complete.")
 
-    cols_transition = {1: ['active transition'],
-                       2: ['active transition', 'reactive transition']}
+        print("Creating transition frame ...")
+        sys.stdout.flush()
 
-    cols_steady = {1: ['active average'],
-                   2: ['active average', 'reactive average']}
+        cols_transition = {1: ['active transition'],
+                        2: ['active transition', 'reactive transition']}
+
+        cols_steady = {1: ['active average'],
+                    2: ['active average', 'reactive average']}
+    except:
+        print('exception')
+        return pd.DataFrame(), pd.DataFrame()
 
     if len(index_transitions) == 0:
         # No events
